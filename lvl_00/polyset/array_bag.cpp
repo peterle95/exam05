@@ -1,4 +1,4 @@
-// FILE GIVEN DURING EXAM
+// FILE GIVEN DURING EXAM, DO NOT CHANGE!!!
 
 #include "array_bag.hpp"
 #include <iostream>

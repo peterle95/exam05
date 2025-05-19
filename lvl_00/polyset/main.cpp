@@ -1,4 +1,4 @@
-// FILE GIVEN DURING EXAM
+// FILE GIVEN DURING EXAM, DO NOT CHANGE!!!
 
 #include "searchable_tree_bag.hpp"
 #include "searchable_array_bag.hpp"
@@ -44,5 +44,5 @@ int main(int ac, char **av)
     st.print();
     sa.clear();
     int arr[] = {1, 2, 3, 4,};
-    sa.insert(arr, 4),
+    sa.insert(arr, 4);
 }
