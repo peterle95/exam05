@@ -1,8 +1,6 @@
-// bigint.cpp
 #include "bigint.hpp"
 #include <algorithm>
 
-// Constructors
 bigint::bigint() {}
 
 bigint::bigint(unsigned long long n) {
@@ -19,7 +17,6 @@ bigint::bigint(unsigned long long n) {
 
 bigint::bigint(const bigint& other) : digits(other.digits) {}
 
-// Assignment operator
 bigint& bigint::operator=(const bigint& other) {
     if (this != &other) {
         digits = other.digits;
@@ -27,7 +24,6 @@ bigint& bigint::operator=(const bigint& other) {
     return *this;
 }
 
-// Addition operators
 bigint bigint::operator+(const bigint& other) const {
     bigint result = *this;
     result += other;
@@ -55,7 +51,6 @@ bigint& bigint::operator+=(const bigint& other) {
     return *this;
 }
 
-// Increment operators
 bigint& bigint::operator++() {
     *this += bigint(1);
     return *this;
@@ -67,7 +62,6 @@ bigint bigint::operator++(int) {
     return temp;
 }
 
-// Digit shift operators
 bigint bigint::operator<<(unsigned int shift) const {
     if (shift == 0 || (digits.size() == 1 && digits[0] == 0)) {
         return *this;
@@ -98,7 +92,6 @@ bigint bigint::operator>>(unsigned int shift) const {
 }
 
 bigint& bigint::operator>>=(const bigint& shift) {
-    // Convert shift to unsigned int
     unsigned int s = 0;
     for (size_t i = 0; i < shift.digits.size(); ++i) {
         s = s * 10 + shift.digits[shift.digits.size() - 1 - i];
@@ -118,7 +111,6 @@ bigint& bigint::operator>>=(const bigint& shift) {
     return *this;
 }
 
-// Comparison operators
 bool bigint::operator<(const bigint& other) const {
     if (digits.size() != other.digits.size()) {
         return digits.size() < other.digits.size();
@@ -153,9 +145,9 @@ bool bigint::operator>=(const bigint& other) const {
     return !(*this < other);
 }
 
-// Output operator
 std::ostream& operator<<(std::ostream& os, const bigint& bi) {
-    if (bi.digits.empty()) {
+    if (bi.digits.empty()) 
+    {
         os << "0";
         return os;
     }
