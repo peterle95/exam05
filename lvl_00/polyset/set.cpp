@@ -5,9 +5,7 @@ set::set(searchable_bag &bag) : bag(bag) {}
 set::set(const set &other) : bag(other.bag) {}
 
 set &set::operator=(const set &other) {
-    // This is a reference, so we can't really assign to it.
-    // This function is here for orthodox canonical form.
-    (void)other; // Mark parameter as intentionally unused
+    (void)other;
     return *this;
 }
 
