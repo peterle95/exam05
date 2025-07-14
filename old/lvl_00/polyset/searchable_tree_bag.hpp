@@ -9,9 +9,9 @@ public:
     searchable_tree_bag();
     searchable_tree_bag(const searchable_tree_bag &other);
     searchable_tree_bag &operator=(const searchable_tree_bag &other);
-    ~searchable_tree_bag();
+    virtual ~searchable_tree_bag();  // Make destructor virtual
     
-    bool has(int val) const;
+    bool has(int val) const override;  // override for clarity (optional)
 
 private:
     bool search_node(node *n, int val) const;

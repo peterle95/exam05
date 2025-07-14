@@ -9,7 +9,7 @@ searchable_tree_bag &searchable_tree_bag::operator=(const searchable_tree_bag &o
     return *this;
 }
 
-searchable_tree_bag::~searchable_tree_bag() {}
+searchable_tree_bag::~searchable_tree_bag() {}  // Virtual destructor implementation
 
 bool searchable_tree_bag::has(int val) const {
     return search_node(this->tree, val);
