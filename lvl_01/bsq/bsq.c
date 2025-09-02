@@ -46,7 +46,8 @@ int parse_first_line(char *line, Map *map) {
     map->full = token[0];
     
     // Check that all characters are different
-    if (map->empty == map->obstacle || map->empty == map->full || map->obstacle == map->full) {
+    if (map->empty == map->obstacle || map->empty == map->full 
+        || map->obstacle == map->full) {
         return 0;
     }
     
