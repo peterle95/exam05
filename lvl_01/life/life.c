@@ -13,7 +13,7 @@ char **new_tab(int width, int height)
 	char **tab = malloc(sizeof(char *) * height);
 	for (int i = 0; i < height; i++)
 	{
-		tab[i] = calloc(sizeof(char), width);
+		tab[i] = calloc(width, sizeof(char)); // new
 		for (int j = 0; j < width; j++)
 			tab[i][j] = ' ';
 	}
@@ -99,6 +99,8 @@ int main(int ac, char **av)
 	int width = atoi(av[1]);
 	int height = atoi(av[2]);
 	int iter = atoi(av[3]);
+	if (width <= 0 || height <= 0 || iter < 0) // new
+		return 1;
 	char **tab = new_tab(width, height);
 	t_pen pen = {0,0,0};
 	char command;
@@ -131,7 +133,8 @@ int main(int ac, char **av)
 				break;
 		}
 	}
-	print_tab(tab, width, height);
+	if (pen.is_draw)
+		tab[pen.y][pen.x] = 'O'; // new
 	for (int it = 0; it < iter; it++)
 		iter_map(tab, width, height);
 	print_tab(tab, width, height);
