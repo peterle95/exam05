@@ -17,6 +17,116 @@ typedef struct {
     int col;
 } Square;
 
+int ft_atoi(const char *str) {
+    int result = 0;
+    int sign = 1;
+    int i = 0;
+    
+    // Skip whitespace
+    while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') {
+        i++;
+    }
+    
+    // Handle sign
+    if (str[i] == '-') {
+        sign = -1;
+        i++;
+    } else if (str[i] == '+') {
+        i++;
+    }
+    
+    // Convert digits
+    while (str[i] >= '0' && str[i] <= '9') {
+        result = result * 10 + (str[i] - '0');
+        i++;
+    }
+    
+    return sign * result;
+}
+
+char* ft_strcpy(char *dest, const char *src) {
+    char *original_dest = dest;
+    
+    while (*src != '\0') {
+        *dest = *src;
+        dest++;
+        src++;
+    }
+    *dest = '\0';
+    
+    return original_dest;
+}
+
+int ft_strlen(const char *str) {
+    int length = 0;
+    
+    while (str[length] != '\0') {
+        length++;
+    }
+    
+    return length;
+}
+
+char* ft_strtok(char *str, const char *delimiters) {
+    static char *next_token = NULL;
+    char *token_start;
+    
+    // If str is NULL, continue from where we left off
+    if (str == NULL) {
+        str = next_token;
+    }
+    
+    // If no string to process, return NULL
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    // Skip leading delimiters
+    while (*str != '\0') {
+        int is_delim = 0;
+        for (int i = 0; delimiters[i] != '\0'; i++) {
+            if (*str == delimiters[i]) {
+                is_delim = 1;
+                break;
+            }
+        }
+        if (!is_delim) {
+            break;
+        }
+        str++;
+    }
+    
+    // If we reached end of string, no token found
+    if (*str == '\0') {
+        next_token = NULL;
+        return NULL;
+    }
+    
+    // Mark the start of the token
+    token_start = str;
+    
+    // Find the end of the token
+    while (*str != '\0') {
+        int is_delim = 0;
+        for (int i = 0; delimiters[i] != '\0'; i++) {
+            if (*str == delimiters[i]) {
+                is_delim = 1;
+                break;
+            }
+        }
+        if (is_delim) {
+            *str = '\0';
+            next_token = str + 1;
+            return token_start;
+        }
+        str++;
+    }
+    
+    // Reached end of string
+    next_token = NULL;
+    return token_start;
+}
+
 void free_map(Map *map) {
     if (map && map->grid) {
         for (int i = 0; i < map->rows; i++) {
@@ -28,21 +138,21 @@ void free_map(Map *map) {
 }
 
 int parse_first_line(char *line, Map *map) {
-    char *token = strtok(line, " \t\n");
+    char *token = ft_strtok(line, " \t\n");
     if (!token) return 0;
-    map->rows = atoi(token);
+    map->rows = ft_atoi(token);
     if (map->rows <= 0) return 0;
     
-    token = strtok(NULL, " \t\n");
-    if (!token || strlen(token) != 1) return 0;
+    token = ft_strtok(NULL, " \t\n");
+    if (!token || ft_strlen(token) != 1) return 0;
     map->empty = token[0];
     
-    token = strtok(NULL, " \t\n");
-    if (!token || strlen(token) != 1) return 0;
+    token = ft_strtok(NULL, " \t\n");
+    if (!token || ft_strlen(token) != 1) return 0;
     map->obstacle = token[0];
     
-    token = strtok(NULL, " \t\n");
-    if (!token || strlen(token) != 1) return 0;
+    token = ft_strtok(NULL, " \t\n");
+    if (!token || ft_strlen(token) != 1) return 0;
     map->full = token[0];
     
     // Check that all characters are different
@@ -55,7 +165,7 @@ int parse_first_line(char *line, Map *map) {
 }
 
 int validate_map_line(char *line, Map *map, int expected_length) {
-    int len = strlen(line);
+    int len = ft_strlen(line);
     if (len > 0 && line[len - 1] == '\n') {
         line[len - 1] = '\0';
         len--;
@@ -138,7 +248,7 @@ Map* read_map(FILE *file) {
         }
         
         // Remove newline if present
-        int len = strlen(line);
+        int len = ft_strlen(line);
         if (len > 0 && line[len - 1] == '\n') {
             line[len - 1] = '\0';
         }
@@ -150,7 +260,7 @@ Map* read_map(FILE *file) {
             free(line);
             return NULL;
         }
-        strcpy(map->grid[i], line);
+        ft_strcpy(map->grid[i], line);
         actual_rows++;
     }
     
@@ -167,7 +277,7 @@ Map* read_map(FILE *file) {
 
 int get_cols(Map *map) {
     if (!map || !map->grid || !map->grid[0]) return 0;
-    return strlen(map->grid[0]);
+    return ft_strlen(map->grid[0]);
 }
 
 int can_place_square(Map *map, int row, int col, int size) {
