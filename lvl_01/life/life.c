@@ -11,11 +11,21 @@ typedef struct s_pen {
 char **new_tab(int width, int height)
 {
 	char **tab = malloc(sizeof(char *) * height);
+	if(!tab)
+		return NULL;
 	for (int i = 0; i < height; i++)
 	{
-		tab[i] = calloc(width, sizeof(char)); // new
-		for (int j = 0; j < width; j++)
-			tab[i][j] = ' ';
+		tab[i] = calloc(width + 1, sizeof(char)); // new
+		if(!tab[i])
+		{
+			while(i >= 0)
+			{
+				free(tab[i]);
+				i--;
+			}
+			free(tab);
+			return NULL;
+		}
 	}
 	return tab;
 }
@@ -62,11 +72,17 @@ void free_tab(char **tab, int height)
 void iter_map(char **tab, int width, int height)
 {
 	char **n_tab = new_tab(width, height);
+	if(!n_tab)
+	{
+		free_tab(tab, height);
+		return;
+	}
 	for (int y = 0; y < height; y++)
 	{
 		for (int x = 0; x < width; x++)
 		{
 			int count = count_voisins(tab, x, y, width, height);
+			n_tab[y][x] = ' '; // Default to dead (space)
 			if (tab[y][x] == 'O')
 			{
 				if (count == 2 || count == 3)
@@ -99,17 +115,19 @@ int main(int ac, char **av)
 	int width = atoi(av[1]);
 	int height = atoi(av[2]);
 	int iter = atoi(av[3]);
-	if (width <= 0 || height <= 0 || iter < 0) // new
+	if (width <= 0 || height <= 0 || iter < 0)
 		return 1;
 	char **tab = new_tab(width, height);
+	if(!tab)
+		return 1;
+	for(int i = 0; i < height; i++) // new
+		for (int j = 0; j < width; j++)
+			tab[i][j] = ' ';
 	t_pen pen = {0,0,0};
 	char command;
 
 	while (read(0, &command, 1) > 0)
 	{
-		if (pen.is_draw)
-			tab[pen.y][pen.x] = 'O';
-
 		switch(command)
 		{
 			case 'w':
@@ -132,9 +150,9 @@ int main(int ac, char **av)
 				pen.is_draw = !pen.is_draw;
 				break;
 		}
+		if (pen.is_draw)
+			tab[pen.y][pen.x] = 'O';
 	}
-	if (pen.is_draw)
-		tab[pen.y][pen.x] = 'O'; // new
 	for (int it = 0; it < iter; it++)
 		iter_map(tab, width, height);
 	print_tab(tab, width, height);
