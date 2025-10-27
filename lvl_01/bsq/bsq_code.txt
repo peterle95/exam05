@@ -1,3 +1,5 @@
+==
+= FILE: ./bsq.c ===
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,6 +57,45 @@ int ft_strlen(const char *str)
     return length;
 }
 
+char* ft_strtok(char *str, const char *delimiters) 
+{
+    static char *next_token = NULL;
+    char *token_start;
+    if (str == NULL) 
+    { str = next_token; }
+    if (str == NULL) 
+    { return NULL; }
+    while (*str != '\0') 
+    {
+        int is_delim = 0;
+        for (int i = 0; delimiters[i] != '\0'; i++) 
+        {
+            if (*str == delimiters[i]) 
+            { is_delim = 1; break; }
+        }
+        if (!is_delim) 
+        { break; }
+        str++;
+    }
+    if (*str == '\0') 
+    { next_token = NULL; return NULL; }
+    token_start = str;
+    while (*str != '\0') 
+    {
+        int is_delim = 0;
+        for (int i = 0; delimiters[i] != '\0'; i++) 
+        {
+            if (*str == delimiters[i]) 
+            { is_delim = 1; break; }
+        }
+        if (is_delim) 
+        { *str = '\0'; next_token = str + 1; return token_start; }
+        str++;
+    }
+    next_token = NULL;
+    return token_start;
+}
+
 void free_map(Map *map) 
 {
     if (map && map->grid) 
@@ -68,45 +109,54 @@ void free_map(Map *map)
     }
 }
 
-int parse_first_line(char *line, Map *map)
+int parse_first_line(char *line, Map *map) 
 {
-    int len = ft_strlen(line);
-    if (len < 4) return 0;
-    if (line[len - 1] == '\n') line[--len] = '\0';
-
-    // last three characters define symbols
-    map->full = line[--len];
-    map->obstacle = line[--len];
-    map->empty = line[--len];
-
-    // the rest is number of rows
-    line[len] = '\0';
-    map->rows = ft_atoi(line);
-
+    char *token = ft_strtok(line, " \t\n");
+    if (!token) return 0;
+    map->rows = ft_atoi(token);
     if (map->rows <= 0) return 0;
-    if (map->empty == map->obstacle || map->empty == map->full || map->obstacle == map->full)
+    
+    token = ft_strtok(NULL, " \t\n");
+    if (!token || ft_strlen(token) != 1) return 0;
+    map->empty = token[0];
+    
+    token = ft_strtok(NULL, " \t\n");
+    if (!token || ft_strlen(token) != 1) return 0;
+    map->obstacle = token[0];
+    
+    token = ft_strtok(NULL, " \t\n");
+    if (!token || ft_strlen(token) != 1) return 0;
+    map->full = token[0];
+    
+    if (map->empty == map->obstacle || map->empty == map->full || map->obstacle == map->full) 
+    {
         return 0;
-
+    }
     return 1;
 }
 
-
-int validate_map_line(char *line, Map *map, int expected_length)
+int validate_map_line(char *line, Map *map, int expected_length) 
 {
     int len = ft_strlen(line);
-    if (len > 0 && line[len - 1] == '\n')
-        line[--len] = '\0';
-
+    if (len > 0 && line[len - 1] == '\n') 
+    {
+        line[len - 1] = '\0';
+        len--;
+    }
+    
     if (len == 0) return -1;
+    
     if (expected_length != -1 && len != expected_length) return -1;
-
-    for (int i = 0; i < len; i++) {
-        if (line[i] != map->empty && line[i] != map->obstacle)
+    
+    for (int i = 0; i < len; i++) 
+    {
+        if (line[i] != map->empty && line[i] != map->obstacle) 
+        {
             return -1;
+        }
     }
     return len;
 }
-
 
 Map* read_map(FILE *file) 
 {
@@ -314,4 +364,5 @@ int main(int argc, char **argv)
         }
     }
     return 0;
-}
+}-e 
+
